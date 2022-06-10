@@ -1,5 +1,7 @@
-# Library to implement array operations.
+%builtins output
 
+# Library to implement array operations.
+from starkware.cairo.common.serialize import serialize_word
 from starkware.cairo.common.alloc import alloc
 
 # Compute the sum of the element in an array.
@@ -113,4 +115,33 @@ func max(input_len : felt, input : felt*) -> (output : felt):
         ids.output = max(ids.input_len_prev, ids.max_prev)
     %}
     return(output)
+end
+
+func contain(input_len : felt, input : felt*, value : felt) -> (output : felt):
+    if input_len == 0:
+        return(0)
+    end
+
+    if value == input[0]:
+        return (1)
+    else:
+        return contain(input_len - 1, input + 1, value) 
+    end
+end
+
+func main{output_ptr: felt*}():
+
+    # Definiendo un array, mi_array, de felts.
+    let (mi_array : felt*) = alloc()
+
+    # Asignando valores a tres elementos de mi_array.  
+    assert mi_array[0] = 1
+    assert mi_array[1] = 2
+    assert mi_array[2] = 3
+    
+    let (result) = contain(3, mi_array, 3)
+    # let (result) = contain(3, mi_array, 12)
+    serialize_word(result)
+
+    return()
 end
